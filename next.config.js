@@ -5,9 +5,12 @@ let assetPrefix = '';
 let basePath = '';
 
 if (isGithubActions) {
-  const repo = process.env.GITHUB_REPOSITORY.replace(/.*?\//, '');
+  const repo = process.env.GITHUB_REPOSITORY?.replace(/.*?\//, '') || '';
   assetPrefix = `/${repo}/`;
   basePath = `/${repo}`;
+} else {
+  assetPrefix = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 }
 
 const nextConfig = {
@@ -15,10 +18,9 @@ const nextConfig = {
   output: 'export',
   basePath,
   assetPrefix,
+  trailingSlash: true,
   images: {
-    loader: 'custom',
-    loaderFile: './src/utils/imageLoader.ts',
-    unoptimized: true,
+    unoptimized: true
   },
   experimental: {
     optimizePackageImports: ['@heroicons/react', '@headlessui/react', 'framer-motion'],
