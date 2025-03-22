@@ -8,12 +8,10 @@ import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon } from '@heroicons/react/24/out
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Services', href: '/services' },
-  { name: 'Projects', href: '/projects' },
-  { name: 'About', href: '/about' },
-  { name: 'Blog', href: '/blog' },
-  { name: 'Contact', href: '/contact' },
+  { name: 'Home', href: '#home' },
+  { name: 'Services', href: '#services' },
+  { name: 'Projects', href: '#projects' },
+  { name: 'About', href: '#about' },
 ];
 
 export default function Navbar() {
@@ -42,6 +40,24 @@ export default function Navbar() {
     }
   };
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    if (element) {
+      const offset = 80; // Height of the fixed navbar
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <Disclosure as="nav" className={`fixed w-full z-50 transition-all duration-300 ${
       isScrolled ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-lg' : 'bg-transparent'
@@ -56,7 +72,11 @@ export default function Navbar() {
                 transition={{ duration: 0.5 }}
                 className="flex items-center"
               >
-                <Link href="/" className="flex-shrink-0 flex items-center space-x-3 group">
+                <Link 
+                  href="#home" 
+                  onClick={(e) => handleNavClick(e, '#home')}
+                  className="flex-shrink-0 flex items-center space-x-3 group"
+                >
                   <div className="relative overflow-hidden rounded-full">
                     <Image
                       src="/logo.jpg"
@@ -90,6 +110,7 @@ export default function Navbar() {
                     <Link
                       key={item.name}
                       href={item.href}
+                      onClick={(e) => handleNavClick(e, item.href)}
                       className="relative text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-sm font-medium transition-colors duration-200 group"
                     >
                       {item.name}
@@ -177,6 +198,7 @@ export default function Navbar() {
                         key={item.name}
                         as={Link}
                         href={item.href}
+                        onClick={(e) => handleNavClick(e, item.href)}
                         className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
                       >
                         {item.name}
