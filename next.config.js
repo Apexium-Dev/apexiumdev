@@ -1,15 +1,24 @@
 /** @type {import('next').NextConfig} */
+const isGithubActions = process.env.GITHUB_ACTIONS || false;
+
+let assetPrefix = '';
+let basePath = '';
+
+if (isGithubActions) {
+  const repo = process.env.GITHUB_REPOSITORY.replace(/.*?\//, '');
+  assetPrefix = `/${repo}/`;
+  basePath = `/${repo}`;
+}
+
 const nextConfig = {
   reactStrictMode: true,
   output: 'export',
-  basePath: '/apexiumdev',
-  assetPrefix: '/apexiumdev/',
+  basePath,
+  assetPrefix,
   images: {
-    remotePatterns: [],
+    loader: 'custom',
+    loaderFile: './src/utils/imageLoader.ts',
     unoptimized: true,
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    path: '/apexiumdev/_next/image'
   },
   experimental: {
     optimizePackageImports: ['@heroicons/react', '@headlessui/react', 'framer-motion'],
