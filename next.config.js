@@ -2,8 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: [],
+    remotePatterns: [],
     unoptimized: true,
+  },
+  experimental: {
+    optimizePackageImports: ['@heroicons/react', '@headlessui/react'],
   },
 }
 
