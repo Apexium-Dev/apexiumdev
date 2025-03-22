@@ -3,8 +3,23 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 
-const projects = [
+type ProjectType = {
+  title: string;
+  description: string;
+  image: string;
+  technologies: string[];
+  status: 'In Development' | 'Completed';
+  githubUrl: string;
+  demoUrl: string;
+  stats: {
+    languages: Record<string, string>;
+  };
+  category: 'Web Development' | 'Mobile App' | 'UI/UX' | 'Other';
+};
+
+const projects: ProjectType[] = [
   {
     title: "Crazy Garage Website",
     description: "Official website for Crazy Garage EN - Car detailing and polishing services. A modern, responsive website built with Next.js and TailwindCSS.",
@@ -13,6 +28,7 @@ const projects = [
     status: "In Development",
     githubUrl: "https://github.com/Apexium-Dev/crazy-garage-website",
     demoUrl: "https://apexium-dev.github.io/crazy-garage-website/en",
+    category: "Web Development",
     stats: {
       languages: {
         TypeScript: "96.1%",
@@ -29,6 +45,7 @@ const projects = [
     status: "Completed",
     githubUrl: "https://github.com/mahmutmft/mahmutmft.github.io",
     demoUrl: "https://mahmutmft.github.io",
+    category: "Web Development",
     stats: {
       languages: {
         HTML: "52.3%",
@@ -38,7 +55,16 @@ const projects = [
   }
 ];
 
+const categories = ['All', 'Web Development', 'Mobile App', 'UI/UX', 'Other'] as const;
+
 export default function Projects() {
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [expandedProject, setExpandedProject] = useState<string | null>(null);
+
+  const filteredProjects = projects.filter(project => 
+    selectedCategory === 'All' || project.category === selectedCategory
+  );
+
   return (
     <section className="py-20 bg-gray-50 dark:bg-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,21 +77,45 @@ export default function Projects() {
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl mb-4">
             Our <span className="text-blue-600 dark:text-blue-400">Projects</span>
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
             Showcasing our innovative web development solutions
           </p>
+
+          {/* Category Filter */}
+          <div className="flex flex-wrap justify-center gap-2 mb-12">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  selectedCategory === category
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-12">
-          {projects.map((project, index) => (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {filteredProjects.map((project, index) => (
             <motion.div
               key={project.title}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.2 }}
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-300"
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className={`bg-white dark:bg-gray-900 rounded-2xl shadow-xl overflow-hidden transform hover:scale-[1.02] transition-transform duration-300 ${
+                expandedProject === project.title ? 'lg:col-span-2' : ''
+              }`}
+              onClick={() => setExpandedProject(
+                expandedProject === project.title ? null : project.title
+              )}
             >
-              <div className="grid md:grid-cols-2 gap-8">
+              <div className={`grid ${
+                expandedProject === project.title ? 'md:grid-cols-2' : 'md:grid-cols-1'
+              } gap-8`}>
                 <div className="relative h-64 md:h-full min-h-[300px] group">
                   <Image
                     src={project.image}
@@ -80,6 +130,9 @@ export default function Projects() {
                       project.status === 'Completed' ? 'bg-green-600' : 'bg-blue-600'
                     } text-white text-sm font-medium rounded-full`}>
                       {project.status}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-700/50 text-white text-sm font-medium rounded-full">
+                      {project.category}
                     </span>
                   </div>
                 </div>
@@ -108,25 +161,31 @@ export default function Projects() {
                     </div>
                   </div>
 
-                  <div className="mb-6">
-                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                      Language Distribution
-                    </h4>
-                    <div className="space-y-2">
-                      {Object.entries(project.stats.languages).map(([lang, percentage]) => (
-                        <div key={lang} className="flex items-center">
-                          <span className="text-sm text-gray-600 dark:text-gray-300 w-24">{lang}</span>
-                          <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-blue-600 dark:bg-blue-500 rounded-full"
-                              style={{ width: percentage }}
-                            />
+                  {expandedProject === project.title && (
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="mb-6"
+                    >
+                      <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        Language Distribution
+                      </h4>
+                      <div className="space-y-2">
+                        {Object.entries(project.stats.languages).map(([lang, percentage]) => (
+                          <div key={lang} className="flex items-center">
+                            <span className="text-sm text-gray-600 dark:text-gray-300 w-24">{lang}</span>
+                            <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-blue-600 dark:bg-blue-500 rounded-full"
+                                style={{ width: percentage }}
+                              />
+                            </div>
+                            <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">{percentage}</span>
                           </div>
-                          <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">{percentage}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
 
                   <div className="flex flex-wrap gap-4">
                     <Link
