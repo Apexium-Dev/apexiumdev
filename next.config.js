@@ -1,23 +1,10 @@
 /** @type {import('next').NextConfig} */
-const isGithubActions = process.env.GITHUB_ACTIONS || false;
-
-let assetPrefix = '';
-let basePath = '';
-
-if (isGithubActions) {
-  const repo = process.env.GITHUB_REPOSITORY?.replace(/.*?\//, '') || '';
-  assetPrefix = `/${repo}/`;
-  basePath = `/${repo}`;
-} else {
-  assetPrefix = process.env.NEXT_PUBLIC_BASE_PATH || '';
-  basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-}
 
 const nextConfig = {
   reactStrictMode: true,
   output: 'export',
-  basePath,
-  assetPrefix,
+  basePath: process.env.GITHUB_ACTIONS ? '/apexiumdev' : '',
+  assetPrefix: process.env.GITHUB_ACTIONS ? '/apexiumdev/' : '',
   trailingSlash: true,
   images: {
     unoptimized: true
@@ -27,7 +14,6 @@ const nextConfig = {
     optimizeCss: true,
     scrollRestoration: true,
   },
-  compress: true,
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
       config.optimization.splitChunks.cacheGroups = {
