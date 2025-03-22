@@ -5,9 +5,55 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Apexium Dev - Student-Led Web Development Agency",
+  metadataBase: new URL('https://apexiumdev.com'),
+  title: {
+    default: "Apexium Dev - Student-Led Web Development Agency",
+    template: "%s | Apexium Dev"
+  },
   description: "We are a student-led web development agency specializing in creating modern, responsive websites for local businesses. Join our team or let us help bring your digital vision to life.",
   keywords: ["web development", "student developers", "website design", "UX/UI design", "static websites", "local business websites"],
+  authors: [{ name: "Apexium Dev Team" }],
+  creator: "Apexium Dev",
+  publisher: "Apexium Dev",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    title: "Apexium Dev - Student-Led Web Development Agency",
+    description: "Modern web development solutions by student developers",
+    url: 'https://apexiumdev.com',
+    siteName: 'Apexium Dev',
+    images: [
+      {
+        url: '/logo.jpg',
+        width: 800,
+        height: 600,
+        alt: 'Apexium Dev Logo',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Apexium Dev - Student-Led Web Development Agency',
+    description: 'Modern web development solutions by student developers',
+    images: ['/logo.jpg'],
+    creator: '@apexium_dev',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: [
       {
